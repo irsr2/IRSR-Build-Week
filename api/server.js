@@ -64,4 +64,22 @@ server.get('/users', async (req, res) => {
   }
 });
 
+server.get('/schoolLog', async (req, res) => {
+  try {
+    const schoolLog = await db('schoolLog');
+    console.log('User', schoolLog);
+    const logJoined = await db
+      .from('schoolLog')
+      .select('*')
+      .innerJoin('equipmentType', 'schoolLog.equipmentID', 'equipmentType.id')
+      .innerJoin('user', 'schoolLog.user', 'user.id')
+      .innerJoin('role', 'user.role', 'role.id');
+    console.log('logJoined', logJoined);
+    res.status(200).json(logJoined);
+  } catch (error) {
+    console.log('Error from the get', error);
+    res.status(500).json(error);
+  }
+});
+
 module.exports = server;
