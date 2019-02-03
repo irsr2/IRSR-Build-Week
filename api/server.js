@@ -8,10 +8,6 @@ const db = require('../data/dbConfig');
 
 server.use(express.json());
 
-server.get('/', (req, res) => {
-  res.status(200).json({ api: 'Working!' });
-});
-
 server.get('/statusTypes', async (req, res) => {
   try {
     const status = await db('statusTypes');
@@ -129,6 +125,38 @@ server.get('/equipment/:id', async (req, res) => {
     res
       .status(500)
       .json({ errorMessage: 'Unable to get that piece of equipment.' });
+  }
+});
+
+server.get('/equipment/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const singleEquipment = await db('equipment').where({ id });
+    res.status(200).json(singleEquipment);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ errorMessage: 'Unable to get that piece of equipment.' });
+  }
+});
+
+server.get('/', async (req, res) => {
+  try {
+    const types = await db
+      .from('equipment')
+      .innerJoin('equipmentType', 'equipment.id', 'equipmentType.id')
+      .innerJoin('schoolLog', 'equipment.id', 'schoolLog.equipmentID')
+      .select(
+        'equipment.id',
+        'equipmentType.id',
+        'equipment.broken',
+        'equipmentType.type',
+        'schoolLog.created_at'
+      )
+      .where('equipment.broken', 1);
+    res.status(200).json(types);
+  } catch (error) {
+    res.status(500).json({ errorMessage: 'Unable to get equipment.' });
   }
 });
 
