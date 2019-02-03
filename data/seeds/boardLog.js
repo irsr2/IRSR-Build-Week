@@ -11,7 +11,7 @@ exports.seed = function(knex, Promise) {
           equipmentID: 4,
           status: 3,
           user: 1,
-          comment: 'Insuficient budget to fix item'
+          comment: 'Insufficient budget to fix item'
         }
       ]);
     });

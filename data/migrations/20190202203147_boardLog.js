@@ -9,7 +9,7 @@ exports.up = function(knex, Promise) {
       .inTable('user')
       .notNullable();
     tbl.string('comment');
-    tbl.timestamps();
+    tbl.timestamp('created_at').defaultTo(knex.fn.now());
   });
 };
 

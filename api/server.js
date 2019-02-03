@@ -83,4 +83,26 @@ server.get('/boardLog', async (req, res) => {
   }
 });
 
+server.post('/boardLog', async (req, res) => {
+  try {
+    const ids = await db('boardLog').insert(req.body);
+    console.log('IDS =', ids);
+    res.status(201).json(ids);
+  } catch (error) {
+    console.log('ERROR', error);
+  }
+});
+
+// router.post('/', async (req, res) => {
+//   try {
+//     const ids = await db('project').insert(req.body);
+//     const projectResponse = await db('project').where({ id: ids[0] });
+//     res.status(responseStatus.postCreated).json(projectResponse);
+//   } catch (error) {
+//     res
+//       .status(responseStatus.serverError)
+//       .json({ message: 'Error adding project.' });
+//   }
+// });
+
 module.exports = server;
