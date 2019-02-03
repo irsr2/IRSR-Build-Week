@@ -15,7 +15,6 @@ server.get('/', (req, res) => {
 server.get('/statusTypes', async (req, res) => {
   try {
     const status = await db('statusTypes');
-    console.log('Status =', status);
     res.status(200).json(status);
   } catch (error) {
     res.status(500).json(error);
@@ -25,7 +24,6 @@ server.get('/statusTypes', async (req, res) => {
 server.get('/equipmentType', async (req, res) => {
   try {
     const status = await db('equipmentType');
-    console.log('Status =', status);
     res.status(200).json(status);
   } catch (error) {
     res.status(500).json(error);
@@ -34,50 +32,53 @@ server.get('/equipmentType', async (req, res) => {
 
 server.get('/equipment', async (req, res) => {
   try {
-    const data = await db('equipment');
-    console.log('Data =', data);
     const types = await db
       .from('equipment')
       .select('*')
       .innerJoin('equipmentType', 'equipment.id', 'equipmentType.id');
-    console.log('Types', types);
     res.status(200).json(types);
   } catch (error) {
-    console.log('Error from the get', error);
     res.status(500).json(error);
   }
 });
 
 server.get('/users', async (req, res) => {
   try {
-    const user = await db('user');
-    console.log('Data =', user);
     const userRoles = await db
       .from('user')
       .select('*')
       .innerJoin('role', 'user.role', 'role.id');
-    console.log('Types', userRoles);
     res.status(200).json(userRoles);
   } catch (error) {
-    console.log('Error from the get', error);
     res.status(500).json(error);
   }
 });
 
 server.get('/schoolLog', async (req, res) => {
   try {
-    const schoolLog = await db('schoolLog');
-    console.log('User', schoolLog);
     const logJoined = await db
       .from('schoolLog')
       .select('*')
       .innerJoin('equipmentType', 'schoolLog.equipmentID', 'equipmentType.id')
       .innerJoin('user', 'schoolLog.user', 'user.id')
       .innerJoin('role', 'user.role', 'role.id');
-    console.log('logJoined', logJoined);
     res.status(200).json(logJoined);
   } catch (error) {
-    console.log('Error from the get', error);
+    res.status(500).json(error);
+  }
+});
+
+server.get('/boardLog', async (req, res) => {
+  try {
+    const logJoined = await db
+      .from('boardLog')
+      .select('*')
+      .innerJoin('equipmentType', 'boardLog.equipmentID', 'equipmentType.id')
+      .innerJoin('user', 'boardLog.user', 'user.id')
+      .innerJoin('role', 'user.role', 'role.id')
+      .innerJoin('statusTypes', 'boardLog.status', 'statusTypes.statusID');
+    res.status(200).json(logJoined);
+  } catch (error) {
     res.status(500).json(error);
   }
 });

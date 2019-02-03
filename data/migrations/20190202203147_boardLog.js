@@ -1,8 +1,8 @@
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable('schoolLog', tbl => {
+  return knex.schema.createTable('boardLog', tbl => {
     tbl.increments();
     tbl.integer('equipmentId').notNullable();
-    tbl.boolean('broken').notNullable();
+    tbl.integer('status').notNullable();
     tbl
       .integer('user')
       .references('id')
@@ -14,5 +14,5 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-  return knex.schema.dropTable('schoolLog');
+  return knex.schema.dropTable('boardLog');
 };
