@@ -106,35 +106,30 @@ server.post('/schoolLog', async (req, res) => {
 server.put('/equipment/:id', async (req, res) => {
   try {
     const changes = req.body;
+    const { id } = req.params;
     const myUpdate = await db('equipment')
-      .where({ id: req.params.id })
+      .where({ id })
       .update(changes);
     console.log('Changes', changes);
     console.log('my update', myUpdate);
     res.status(200).json(myUpdate);
   } catch (error) {
-    console.log('ERROR', error);
+    res
+      .status(500)
+      .json({ errorMessage: 'Unable to update that piece of equipment.' });
   }
 });
 
-// router.put('/:id', async (req, res) => {
-//   try {
-//     const changes = req.body;
-//     const myUpdate = await db('project')
-//       .where({ id: req.params.id })
-//       .update(changes);
-//     if (!myUpdate) {
-//       res
-//         .status(responseStatus.badRequest)
-//         .json({ message: 'This ID does not exist in the database.' });
-//     } else {
-//       res.status(responseStatus.success).json(myUpdate);
-//     }
-//   } catch (error) {
-//     res
-//       .status(responseStatus.badRequest)
-//       .json({ errorMessage: 'Unable to update that project.' });
-//   }
-// });
+server.get('/equipment/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const singleEquipment = await db('equipment').where({ id });
+    res.status(200).json(singleEquipment);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ errorMessage: 'Unable to get that piece of equipment.' });
+  }
+});
 
 module.exports = server;
