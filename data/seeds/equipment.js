@@ -14,27 +14,3 @@ exports.seed = function(knex, Promise) {
       ]);
     });
 };
-
-// router.get('/:id/action', async (req, res) => {
-//   try {
-//     const project = await db('project')
-//       .select('id', 'name', 'description', 'completed')
-//       .where({ id: req.params.id });
-//     const projectActions = await db
-//       .from('project')
-//       .select(
-//         'action.id',
-//         'action.description',
-//         'action.notes',
-//         'action.completed'
-//       )
-//       .innerJoin('action', 'project.id', 'action.action_id')
-//       .where('action.action_id', req.params.id);
-//     const myProject = { ...project[0], actions: projectActions };
-//     res.status(responseStatus.success).json(myProject);
-//   } catch (error) {
-//     res
-//       .status(responseStatus.serverError)
-//       .json({ message: 'Error retreiving data.' });
-//   }
-// });

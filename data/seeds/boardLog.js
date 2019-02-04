@@ -5,13 +5,13 @@ exports.seed = function(knex, Promise) {
     .then(function() {
       // Inserts seed entries
       return knex('boardLog').insert([
-        { equipmentID: 1, status: 1, user: 2 },
-        { equipmentID: 3, status: 2, user: 1 },
+        { equipmentID: 1, status: 1, boardUser: 2 },
+        { equipmentID: 3, status: 2, boardUser: 2 },
         {
           equipmentID: 4,
           status: 3,
-          user: 1,
-          comment: 'Insufficient budget to fix item'
+          boardUser: 2,
+          boardComment: 'Insufficient budget to fix item'
         }
       ]);
     });

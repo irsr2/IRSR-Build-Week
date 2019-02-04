@@ -4,11 +4,11 @@ exports.up = function(knex, Promise) {
     tbl.integer('equipmentId').notNullable();
     tbl.integer('status').notNullable();
     tbl
-      .integer('user')
+      .integer('boardUser')
       .references('id')
       .inTable('user')
       .notNullable();
-    tbl.string('comment');
+    tbl.string('boardComment');
     tbl.timestamp('created_at').defaultTo(knex.fn.now());
   });
 };

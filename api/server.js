@@ -70,12 +70,57 @@ server.get('/boardLog', async (req, res) => {
       .from('boardLog')
       .select('*')
       .innerJoin('equipmentType', 'boardLog.equipmentID', 'equipmentType.id')
-      .innerJoin('user', 'boardLog.user', 'user.id')
+      .innerJoin('user', 'boardLog.boardUser', 'user.id')
       .innerJoin('role', 'user.role', 'role.id')
       .innerJoin('statusTypes', 'boardLog.status', 'statusTypes.statusID');
     res.status(200).json(logJoined);
   } catch (error) {
     res.status(500).json(error);
+  }
+});
+
+server.get('/equipment/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const singleEquipment = await db('equipment').where({ id });
+    res.status(200).json(singleEquipment);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ errorMessage: 'Unable to get that piece of equipment.' });
+  }
+});
+
+server.get('/', async (req, res) => {
+  try {
+    const types = await db
+      .from('equipment')
+      .innerJoin('equipmentType', 'equipment.id', 'equipmentType.id')
+      .innerJoin('schoolLog', 'equipment.id', 'schoolLog.equipmentID')
+      .select()
+      .where('equipment.broken', 1);
+    res.status(200).json(types);
+  } catch (error) {
+    res.status(500).json({ errorMessage: 'Unable to get equipment.' });
+  }
+});
+
+server.get('/singlePage/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const types = await db
+      .from('equipment')
+      .innerJoin('equipmentType', 'equipment.id', 'equipmentType.id')
+      .innerJoin('schoolLog', 'equipment.id', 'schoolLog.equipmentID')
+      .innerJoin('boardLog', 'equipment.id', 'boardLog.equipmentId')
+      .innerJoin('statusTypes', 'boardLog.status', 'statusTypes.statusID')
+      .innerJoin('user', 'boardLog.boardUser', 'user.id')
+      .innerJoin('role', 'user.role', 'role.id')
+      .select()
+      .where({ 'equipment.id': id });
+    res.status(200).json(types);
+  } catch (error) {
+    res.status(500).json({ errorMessage: 'Unable to get that equipment ID.' });
   }
 });
 
@@ -116,47 +161,41 @@ server.put('/equipment/:id', async (req, res) => {
   }
 });
 
-server.get('/equipment/:id', async (req, res) => {
+server.delete('/equipment/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const singleEquipment = await db('equipment').where({ id });
-    res.status(200).json(singleEquipment);
+    const deleteResponse = await db('equipment')
+      .where({ id })
+      .delete();
+    res.status(200).json(deleteResponse);
   } catch (error) {
-    res
-      .status(500)
-      .json({ errorMessage: 'Unable to get that piece of equipment.' });
+    console.log('Err', error);
+    res.status(500).json({ errorMessage: 'Unable to delete that equipment.' });
   }
 });
 
-server.get('/equipment/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const singleEquipment = await db('equipment').where({ id });
-    res.status(200).json(singleEquipment);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ errorMessage: 'Unable to get that piece of equipment.' });
-  }
-});
-
-server.get('/', async (req, res) => {
+server.get('/resolved', async (req, res) => {
   try {
     const types = await db
       .from('equipment')
       .innerJoin('equipmentType', 'equipment.id', 'equipmentType.id')
       .innerJoin('schoolLog', 'equipment.id', 'schoolLog.equipmentID')
-      .select(
-        'equipment.id',
-        'equipmentType.id',
-        'equipment.broken',
-        'equipmentType.type',
-        'schoolLog.created_at'
-      )
-      .where('equipment.broken', 1);
+      .innerJoin('boardLog', 'equipment.id', 'boardLog.equipmentId')
+      .innerJoin('statusTypes', 'boardLog.status', 'statusTypes.statusID')
+      .innerJoin('user', 'boardLog.boardUser', 'user.id')
+      .innerJoin('role', 'user.role', 'role.id')
+      .select()
+      .where({ statusID: 1 });
+    // console.log('types', types[0].equipmentId);
+    // const resolvedIds = types.map(data => data.equipmentId);
+    // let resolvedData = []
+    // for (let i = 0; i < resolvedIds; i ++) {
+
+    // }
+    // console.log('resolved ids', resolvedIds);
     res.status(200).json(types);
   } catch (error) {
-    res.status(500).json({ errorMessage: 'Unable to get equipment.' });
+    res.status(500).json({ errorMessage: 'Unable to get that equipment ID.' });
   }
 });
 
