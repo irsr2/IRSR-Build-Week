@@ -1,11 +1,11 @@
 const express = require('express');
-
-// const equipment = require('../equipment/equipment');
+const helmet = require('helmet');
 
 const server = express();
 
 const db = require('../data/dbConfig');
 
+server.use(helmet());
 server.use(express.json());
 
 server.get('/statusTypes', async (req, res) => {
